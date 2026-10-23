@@ -1,0 +1,12 @@
+{
+  "name": "pdf-form-proof",
+  "owner": { "name": "EssenceAlignment" },
+  "plugins": [
+    {
+      "name": "pdf-form-proof",
+      "source": "./",
+      "description": "Fill fillable PDF forms, then prove every value is visible on the rendered page.",
+      "version": "0.1.0"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.EssenceAlignment/pdf-form-proof",
+  "title": "PDF Form Proof",
+  "description": "Fill fillable PDF forms, then prove every value is visible on the rendered page.",
+  "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/EssenceAlignment/pdf-form-proof",
+    "source": "github"
+  },
+  "websiteUrl": "https://github.com/EssenceAlignment/pdf-form-proof",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "pdf-form-proof",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

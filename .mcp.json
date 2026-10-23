@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "pdf-form-proof": {
+      "command": "uvx",
+      "args": ["--from", "${CLAUDE_PLUGIN_ROOT}", "pdf-form-proof"]
+    }
+  }
+}

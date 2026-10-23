@@ -1,0 +1,68 @@
+{
+  "manifest_version": "0.4",
+  "name": "pdf-form-proof",
+  "display_name": "PDF Form Proof",
+  "version": "0.1.0",
+  "description": "Fill fillable PDF forms, then prove every value is visible on the rendered page.",
+  "long_description": "Inspect exact field names, fill AcroForm PDFs by name (unknown names are refused and nothing is written; the source is never modified), then render the page and OCR it to confirm each value is VISIBLE, not only stored in the file. Runs locally with no network calls. The verify tool needs poppler and tesseract installed.",
+  "author": {
+    "name": "EssenceAlignment",
+    "url": "https://github.com/EssenceAlignment"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EssenceAlignment/pdf-form-proof"
+  },
+  "homepage": "https://github.com/EssenceAlignment/pdf-form-proof",
+  "support": "https://github.com/EssenceAlignment/pdf-form-proof/issues",
+  "license": "MIT",
+  "keywords": [
+    "pdf",
+    "forms",
+    "acroform",
+    "ocr",
+    "verification",
+    "nonprofit"
+  ],
+  "server": {
+    "type": "uv",
+    "entry_point": "run_server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "run_server.py"
+      ]
+    }
+  },
+  "tools": [
+    {
+      "name": "pdf_form_inspect",
+      "description": "List every fillable field with exact name, type, and checkbox on-states."
+    },
+    {
+      "name": "pdf_form_fill",
+      "description": "Fill fields by exact name into a new PDF; refuses unknown names; never overwrites."
+    },
+    {
+      "name": "pdf_form_verify",
+      "description": "OCR the rendered page and confirm each value is visible, not only stored."
+    },
+    {
+      "name": "pdf_sha256",
+      "description": "SHA-256 fingerprint of a file."
+    }
+  ],
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "linux",
+      "win32"
+    ],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  }
+}

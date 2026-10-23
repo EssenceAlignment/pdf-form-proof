@@ -1,0 +1,12 @@
+.git/
+.github/
+.claude-plugin/
+.mcp.json
+gemini-extension.json
+GEMINI.md
+Dockerfile
+tests/
+dist/
+**/__pycache__/
+*.mcpb
+server.json

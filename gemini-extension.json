@@ -1,0 +1,13 @@
+{
+  "name": "pdf-form-proof",
+  "version": "0.1.0",
+  "description": "Fill fillable PDF forms, then prove every value is visible on the rendered page.",
+  "mcpServers": {
+    "pdf-form-proof": {
+      "command": "uvx",
+      "args": ["--from", "${extensionPath}", "pdf-form-proof"],
+      "cwd": "${extensionPath}"
+    }
+  },
+  "contextFileName": "GEMINI.md"
+}
