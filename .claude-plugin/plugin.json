@@ -1,10 +1,22 @@
 {
   "name": "pdf-form-proof",
+  "displayName": "PDF Form Proof",
   "version": "0.1.0",
   "description": "Fill fillable PDF forms, then prove every value is visible on the rendered page (OCR vs. text layer). Refuses unknown field names; never overwrites; runs locally.",
-  "author": { "name": "EssenceAlignment" },
+  "author": {
+    "name": "EssenceAlignment"
+  },
   "homepage": "https://github.com/EssenceAlignment/pdf-form-proof",
   "repository": "https://github.com/EssenceAlignment/pdf-form-proof",
   "license": "MIT",
-  "keywords": ["pdf", "pdf-form", "form-filling", "acroform", "ocr", "verification", "nonprofit", "mcp"]
+  "keywords": [
+    "pdf",
+    "pdf-form",
+    "form-filling",
+    "acroform",
+    "ocr",
+    "verification",
+    "nonprofit",
+    "mcp"
+  ]
 }
