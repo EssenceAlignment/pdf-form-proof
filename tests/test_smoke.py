@@ -29,3 +29,6 @@ def test_fill_refuse_and_verify(tmp_path):
     if all(shutil.which(b) for b in ("pdftotext", "pdftoppm", "tesseract")):
         v = check_legibility(out, ["Sample Community Food Bank"])
         assert v["verdict"] == "PASS"
+        cache = os.path.expanduser("~/.cache/pdf-form-proof")
+        left = [f for _, _, fs in os.walk(cache) for f in fs if f.endswith(".png")]
+        assert left == [], left

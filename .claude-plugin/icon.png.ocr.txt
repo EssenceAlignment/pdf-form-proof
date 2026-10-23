@@ -1,0 +1,13 @@
+SIDECAR-GRADE: INDEX-GRADE (search / discovery). NOT FILING-GRADE.
+FILING-GATE: any figure entering a pleading, demand, or declaration must be
+  human-read against the source image first. OCR/VLM transpose digits.
+SOURCE: icon.png
+SOURCE-SIZE: 23728
+SOURCE-MTIME: 1792727086.444232735
+OCR-ENGINE: tesseract-fallback
+VISION-EXIT: 0
+VISION-BIN: 6d15a2cb08d21796
+BODY-BYTES: 1
+EXIF: none
+--- OCR TEXT ---
+

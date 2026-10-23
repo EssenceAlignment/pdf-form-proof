@@ -25,6 +25,10 @@ empty OCR result from a broken engine is not evidence a value is missing.
 Limit: this proves legibility only. It says nothing about whether the values
 are correct, complete, or appropriate for the form's purpose.
 
+Privacy: the rendered page image lives in a temporary folder under
+~/.cache/pdf-form-proof that is deleted the moment OCR finishes, including on
+errors. Nothing stays on disk unless keep_render names a destination.
+
 Requires the poppler utilities (pdftotext, pdftoppm) and the tesseract
 binary on PATH. Region scoping also needs Pillow.
 """
@@ -100,42 +104,55 @@ def text_layer(pdf: str, page: int):
     return out.stdout.decode("utf-8", "replace")
 
 
-def render_ocr(pdf: str, page: int, dpi: int = 300, region=None):
-    """Render the page and OCR it. Returns (text or _Refusal or None, png path)."""
+def render_ocr(pdf: str, page: int, dpi: int = 300, region=None, keep_render: str | None = None):
+    """Render the page and OCR it. Returns (text or _Refusal or None, kept render path or None).
+
+    The page image exists only inside a temporary folder that is deleted as soon as
+    this function returns, on success or failure. Nothing is left on disk unless the
+    caller asks for a copy with keep_render. Leftover images from version 0.1.0
+    (which kept the last render until the next run) are removed here too.
+    """
     cache = os.path.expanduser("~/.cache/pdf-form-proof")
     os.makedirs(cache, exist_ok=True)
     for old in glob.glob(os.path.join(cache, "render_*")):
         shutil.rmtree(old, ignore_errors=True)
-    d = tempfile.mkdtemp(prefix="render_", dir=cache)
-    stem = os.path.join(d, "p")
-    rr = subprocess.run(["pdftoppm", "-png", "-r", str(dpi), "-f", str(page), "-l", str(page), pdf, stem],
-                        capture_output=True, timeout=300)
-    pngs = [os.path.join(d, f) for f in sorted(os.listdir(d)) if f.endswith(".png")]
-    if rr.returncode != 0:
-        e = next((x for x in rr.stderr.decode("utf-8", "replace").splitlines() if x.strip()), "(no stderr)")
-        return _Refusal(f"pdftoppm exited {rr.returncode}; the page was never rendered: {e.strip()[:120]}"), None
-    if not pngs:
-        return _Refusal(f"pdftoppm exited 0 but produced no image for page {page}"), None
-    png = pngs[0]
-    if region:
-        try:
-            from PIL import Image
-        except Exception:
-            return None, png  # caller refuses: no silent whole-page fallback
-        img = Image.open(png)
-        W, H = img.size
-        x0, y0, x1, y1 = region
-        px, py = 0.02, 0.01  # pad the crop so a boundary glyph keeps its whole body
-        img = img.crop((max(0, int((x0 - px) * W)), max(0, int((y0 - py) * H)),
-                        min(W, int((x1 + px) * W)), min(H, int((y1 + py) * H))))
-        img.save(png)
-    # The tesseract binary is used directly; a Python wrapper was observed to
-    # return an empty string with no error on one interpreter.
-    r = subprocess.run(["tesseract", png, "stdout"], capture_output=True, timeout=300)
-    if r.returncode != 0:
-        e = next((x for x in r.stderr.decode("utf-8", "replace").splitlines() if x.strip()), "(no stderr)")
-        return _Refusal(f"tesseract exited {r.returncode}; OCR never read the page: {e.strip()[:120]}"), png
-    return r.stdout.decode("utf-8", "replace"), png
+    with tempfile.TemporaryDirectory(prefix="tmp_", dir=cache) as d:
+        stem = os.path.join(d, "p")
+        rr = subprocess.run(["pdftoppm", "-png", "-r", str(dpi), "-f", str(page), "-l", str(page), pdf, stem],
+                            capture_output=True, timeout=300)
+        pngs = [os.path.join(d, f) for f in sorted(os.listdir(d)) if f.endswith(".png")]
+        if rr.returncode != 0:
+            e = next((x for x in rr.stderr.decode("utf-8", "replace").splitlines() if x.strip()), "(no stderr)")
+            return _Refusal(f"pdftoppm exited {rr.returncode}; the page was never rendered: {e.strip()[:120]}"), None
+        if not pngs:
+            return _Refusal(f"pdftoppm exited 0 but produced no image for page {page}"), None
+        png = pngs[0]
+        if region:
+            try:
+                from PIL import Image
+            except Exception:
+                return None, None  # caller refuses: no silent whole-page fallback
+            img = Image.open(png)
+            W, H = img.size
+            x0, y0, x1, y1 = region
+            px, py = 0.02, 0.01  # pad the crop so a boundary glyph keeps its whole body
+            img = img.crop((max(0, int((x0 - px) * W)), max(0, int((y0 - py) * H)),
+                            min(W, int((x1 + px) * W)), min(H, int((y1 + py) * H))))
+            img.save(png)
+        kept = None
+        if keep_render:
+            try:
+                shutil.copy2(png, keep_render)
+                kept = keep_render
+            except Exception:
+                kept = None
+        # The tesseract binary is used directly; a Python wrapper was observed to
+        # return an empty string with no error on one interpreter.
+        r = subprocess.run(["tesseract", png, "stdout"], capture_output=True, timeout=300)
+        if r.returncode != 0:
+            e = next((x for x in r.stderr.decode("utf-8", "replace").splitlines() if x.strip()), "(no stderr)")
+            return _Refusal(f"tesseract exited {r.returncode}; OCR never read the page: {e.strip()[:120]}"), kept
+        return r.stdout.decode("utf-8", "replace"), kept
 
 
 def parse_region(region):
@@ -171,7 +188,7 @@ def check_legibility(pdf: str, require: list[str] | None = None, page: int = 1,
     tl_raw = text_layer(pdf, page)
     if isinstance(tl_raw, _Refusal):
         return {"verdict": "REFUSE", "kind": "tool_failure", "reason": tl_raw.reason}
-    ocr_raw, png = render_ocr(pdf, page, dpi, reg)
+    ocr_raw, kept = render_ocr(pdf, page, dpi, reg, keep_render)
     if isinstance(ocr_raw, _Refusal):
         return {"verdict": "REFUSE", "kind": "tool_failure", "reason": ocr_raw.reason,
                 "note": "no legibility finding is made; an empty OCR result is not evidence"}
@@ -210,13 +227,6 @@ def check_legibility(pdf: str, require: list[str] | None = None, page: int = 1,
             v = "MISSING"; refuse = True
         rows.append({"value": want, "source": origin, "in_text_layer": in_text,
                      "in_render": in_ocr, "verdict": v})
-    kept = None
-    if keep_render and png:
-        try:
-            shutil.copy2(png, keep_render)
-            kept = keep_render
-        except Exception:
-            kept = None
     return {
         "verdict": "REFUSE" if refuse else "PASS",
         "kind": "finding" if refuse else "pass",

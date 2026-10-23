@@ -1,11 +1,11 @@
 [project]
 name = "pdf-form-proof"
-version = "0.1.0"
+version = "0.1.1"
 description = "Fill fillable PDF forms, then prove every value is visible on the rendered page. MCP server and CLI."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "EssenceAlignment" }]
+authors = [{ name = "Eric Brakebill-Jones" }]
 keywords = ["pdf", "pdf-form", "acroform", "form-filling", "mcp", "ocr", "verification", "nonprofit"]
 classifiers = [
   "Programming Language :: Python :: 3",

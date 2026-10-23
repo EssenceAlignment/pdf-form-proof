@@ -2,11 +2,11 @@
   "manifest_version": "0.4",
   "name": "pdf-form-proof",
   "display_name": "PDF Form Proof",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Fill fillable PDF forms, then prove every value is visible on the rendered page.",
   "long_description": "Inspect exact field names, fill AcroForm PDFs by name (unknown names are refused and nothing is written; the source is never modified), then render the page and OCR it to confirm each value is VISIBLE, not only stored in the file. Runs locally with no network calls. The verify tool needs poppler and tesseract installed.",
   "author": {
-    "name": "EssenceAlignment",
+    "name": "Eric Brakebill-Jones",
     "url": "https://github.com/EssenceAlignment"
   },
   "repository": {

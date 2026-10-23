@@ -131,8 +131,11 @@ pdf-form-proof runs entirely on your own computer.
 
 - Data collection: none. It reads only the PDF files you name and writes only
   the output path you name.
-- Usage and storage: rendered page images are kept in `~/.cache/pdf-form-proof`
-  only until the next verify run, which deletes them.
+- Usage and storage: each rendered page image is written to a temporary folder
+  under `~/.cache/pdf-form-proof` and deleted as soon as the OCR step finishes,
+  including when a step fails. Nothing stays on disk unless you ask for a copy
+  with `--keep-render`. (Version 0.1.0 kept the last image until the next run;
+  0.1.1 removes any such leftover on its first run.)
 - Third-party sharing: none. It makes no network calls and sends no telemetry.
 - Retention: nothing is retained beyond the files you create.
 - Contact: open an issue at https://github.com/EssenceAlignment/pdf-form-proof/issues
@@ -144,6 +147,17 @@ document pipeline after a filled form passed every text-based check and was
 still returned because a value could not be seen on the page. The two rules
 that came out of that: never hide a partial fill, and check the page a person
 sees, not only the data in the file.
+
+## Author
+
+Built by Eric Brakebill-Jones, MSW Systems Architect | Clinical Workflow and Grant Data Lineage.
+GitHub: https://github.com/EssenceAlignment
+
+## Changes
+
+- 0.1.1: the rendered page image is deleted the moment OCR finishes (it was
+  kept until the next run in 0.1.0). Author line added.
+- 0.1.0: first release.
 
 ## License
 
