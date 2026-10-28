@@ -31,6 +31,9 @@ mcp = FastMCP(
         "This tool fills forms; it does not give legal, tax, or benefits advice."
     ),
 )
+# FastMCP takes no version kwarg on newer mcp releases (TypeError on a fresh uvx resolve, measured 2026-10-27);
+# the low-level server owns serverInfo.version, so set it there from __version__.
+mcp._mcp_server.version = __version__
 
 
 @mcp.tool(

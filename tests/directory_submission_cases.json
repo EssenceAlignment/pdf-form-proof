@@ -1,0 +1,31 @@
+{
+  "plugin": "pdf-form-proof",
+  "version": "0.1.2",
+  "transport": "streamable-http (stateless, json_response) at POST /mcp",
+  "fixture": "tests/fixtures/form.pdf (any AcroForm PDF; the public IRS W-9 works) or the generated one-field form built by tests/test_remote_cases.py",
+  "positive": [
+    {"id": "P1", "tool": "pdf_form_inspect", "input": "valid AcroForm PDF as base64",
+     "expect": "kind == 'acroform', field_count >= 1, every field has name and type"},
+    {"id": "P2", "tool": "pdf_form_fill", "input": "same PDF, values = {first text field: 'Sample Community Food Bank'}",
+     "expect": "status == 'ok', output_pdf_base64 present, output_sha256 is 64 hex chars, read_back_mismatches == []"},
+    {"id": "P3", "tool": "pdf_form_verify", "input": "the P2 output PDF, values = ['Sample Community Food Bank']",
+     "expect": "verdict == 'PASS' when poppler and tesseract are installed; otherwise verdict == 'REFUSE' with kind == 'tool_failure' and no finding"},
+    {"id": "P4", "tool": "pdf_sha256", "input": "the P2 output PDF",
+     "expect": "sha256 equals P2 output_sha256; bytes equals P2 output_bytes"},
+    {"id": "P5", "tool": "pdf_form_fill", "input": "same PDF, values = {}, finalize = true",
+     "expect": "status == 'ok', finalize list reports what was removed, output differs from input only in form dictionary"}
+  ],
+  "negative": [
+    {"id": "N1", "tool": "pdf_form_fill", "input": "valid PDF, values = {'no.such.field': 'x'}, strict = true",
+     "expect": "status == 'refused', unknown_fields == ['no.such.field'], no output_pdf_base64 key"},
+    {"id": "N2", "tool": "pdf_form_inspect", "input": "pdf_base64 = 'not base64!!'",
+     "expect": "status == 'refused', reason names base64; no exception"},
+    {"id": "N3", "tool": "pdf_form_verify", "input": "base64 of bytes that do not start with %PDF",
+     "expect": "verdict == 'REFUSE', kind == 'usage'; nothing rendered"}
+  ],
+  "statelessness_checks": [
+    "No tool parameter is a file path; every input is pdf_base64.",
+    "After any call, the temporary directory used by verify no longer exists (asserted in tests/test_remote_cases.py).",
+    "The container runs as a non-root user with /app read-only."
+  ]
+}

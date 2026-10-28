@@ -3,7 +3,7 @@
   "name": "io.github.EssenceAlignment/pdf-form-proof",
   "title": "PDF Form Proof",
   "description": "Fill fillable PDF forms, then prove every value is visible on the rendered page.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": {
     "url": "https://github.com/EssenceAlignment/pdf-form-proof",
     "source": "github"
@@ -14,7 +14,7 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "pdf-form-proof",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "transport": {
         "type": "stdio"
       }

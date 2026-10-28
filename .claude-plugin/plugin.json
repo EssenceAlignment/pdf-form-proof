@@ -1,7 +1,7 @@
 {
   "name": "pdf-form-proof",
   "displayName": "PDF Form Proof",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Fill fillable PDF forms, then prove every value is visible on the rendered page (OCR vs. text layer). Refuses unknown field names; never overwrites; runs locally.",
   "author": {
     "name": "Eric Brakebill-Jones"

@@ -1,0 +1,27 @@
+# Cloud Run service spec for the remote endpoint. Staged only; nothing deployed.
+# Deploy (operator-run, HALT-BEFORE-DEPLOY):
+#   gcloud run deploy pdf-form-proof --source . --region us-west1 --allow-unauthenticated \
+#     --memory 1Gi --cpu 1 --concurrency 4 --max-instances 2 --timeout 120
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: pdf-form-proof
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "2"
+    spec:
+      containerConcurrency: 4
+      timeoutSeconds: 120
+      containers:
+        - image: REGION-docker.pkg.dev/PROJECT/pdf-form-proof/pdf-form-proof:0.1.2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PFP_MAX_PDF_BYTES
+              value: "26214400"
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: "1"
