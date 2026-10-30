@@ -9,8 +9,8 @@ COPY src ./src
 COPY server_remote.py ./
 RUN pip install --no-cache-dir . "mcp>=1.30,<2"
 # Non-root, no writable app dir; /tmp is the only scratch space and is wiped per call.
-RUN useradd -r -u 10001 pfp && chown -R root:root /app && chmod -R a-w /app
+RUN useradd -r -u 10001 pfp && chown -R root:root /app && chmod -R a+rX,a-w /app
 USER pfp
-ENV PORT=8080 HOST=0.0.0.0 PFP_MAX_PDF_BYTES=26214400
+ENV PORT=8080 HOST=0.0.0.0 PFP_MAX_PDF_BYTES=26214400 HOME=/tmp
 EXPOSE 8080
 CMD ["python", "server_remote.py"]

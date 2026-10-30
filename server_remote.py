@@ -74,10 +74,12 @@ def _kind(raw: bytes) -> str:
     if acro is None:
         return "none"
     acro = acro.get_object()
-    if "/XFA" in acro:
-        return "xfa"
     fields = acro.get("/Fields")
-    return "acroform" if fields and len(fields) > 0 else "none"
+    if fields and len(fields) > 0:
+        # Hybrid XFA+AcroForm (e.g. IRS W-9): fill the AcroForm fields;
+        # pdf_form_fill already strips /XFA so viewers show the filled values.
+        return "acroform"
+    return "xfa" if "/XFA" in acro else "none"
 
 
 @mcp.tool(
@@ -244,6 +246,15 @@ def pdf_sha256(pdf_base64: str) -> dict[str, Any]:
         return raw
     return {"sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw),
             "server_version": __version__}
+
+
+
+# OpenAI plugin directory domain verification: serve the exact challenge token as plain text.
+@mcp.custom_route("/.well-known/openai-apps-challenge", methods=["GET"])
+async def openai_apps_challenge(request):  # noqa: ARG001
+    from starlette.responses import PlainTextResponse
+    token = os.environ.get("OPENAI_APPS_CHALLENGE", "")
+    return PlainTextResponse(token, status_code=200 if token else 404)
 
 
 def main() -> None:
