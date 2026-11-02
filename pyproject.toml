@@ -1,6 +1,6 @@
 [project]
 name = "pdf-form-proof"
-version = "0.1.2"
+version = "0.1.6"
 description = "Fill fillable PDF forms, then prove every value is visible on the rendered page. MCP server and CLI."
 readme = "README.md"
 requires-python = ">=3.11"

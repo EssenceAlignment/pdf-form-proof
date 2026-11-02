@@ -7,6 +7,7 @@ WORKDIR /app
 COPY pyproject.toml uv.lock README.md LICENSE ./
 COPY src ./src
 COPY server_remote.py ./
+COPY samples ./samples
 RUN pip install --no-cache-dir . "mcp>=1.30,<2"
 # Non-root, no writable app dir; /tmp is the only scratch space and is wiped per call.
 RUN useradd -r -u 10001 pfp && chown -R root:root /app && chmod -R a+rX,a-w /app

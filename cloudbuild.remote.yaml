@@ -1,0 +1,8 @@
+# Build the REMOTE server image (Dockerfile.remote) for Cloud Run service pdf-form-proof-mcp.
+# Run: gcloud builds submit --project compass-outlaw-workspace --region us-west1 --config cloudbuild.remote.yaml .
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "Dockerfile.remote", "-t", "${_IMAGE}", "."]
+images: ["${_IMAGE}"]
+substitutions:
+  _IMAGE: us-west1-docker.pkg.dev/compass-outlaw-workspace/cloud-run-source-deploy/pdf-form-proof-mcp:0.1.6
