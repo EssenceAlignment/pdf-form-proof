@@ -1,0 +1,12 @@
+# Cloud Build upload list for the remote server image. Sample PDFs on disk ARE uploaded.
+.git
+.venv
+__pycache__
+**/__pycache__
+.pytest_cache
+dist
+build
+tests
+*.bak-*
+*.ocr.txt
+*.mcpb

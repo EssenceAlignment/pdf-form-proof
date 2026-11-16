@@ -8,6 +8,9 @@ COPY pyproject.toml uv.lock README.md LICENSE ./
 COPY src ./src
 COPY server_remote.py ./
 COPY samples ./samples
+# Sample PDFs are not in git (the plugin directory reads text files only). Build them if absent.
+# The copies OpenAI reviewed are at git tag remote-0.1.6; deploy from that tag to keep their bytes.
+RUN test -f samples/equipment-check.pdf || (pip install --no-cache-dir reportlab && python samples/make_samples.py)
 RUN pip install --no-cache-dir . "mcp>=1.30,<2"
 # Non-root, no writable app dir; /tmp is the only scratch space and is wiped per call.
 RUN useradd -r -u 10001 pfp && chown -R root:root /app && chmod -R a+rX,a-w /app

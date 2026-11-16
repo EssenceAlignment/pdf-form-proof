@@ -155,6 +155,8 @@ GitHub: https://github.com/EssenceAlignment
 
 ## Changes
 
+- 0.1.7: sample PDFs are no longer stored in the repository; build them with
+  `python samples/make_samples.py`. No change to the tools.
 - 0.1.1: the rendered page image is deleted the moment OCR finishes (it was
   kept until the next run in 0.1.0). Author line added.
 - 0.1.0: first release.

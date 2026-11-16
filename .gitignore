@@ -7,3 +7,10 @@ build/
 *.mcpb
 .mcpregistry_*
 .mcp_publisher_token
+
+# Binary samples and local sidecars stay out of the plugin (directory validator reads text only).
+# The sample PDFs are built by samples/make_samples.py; the reviewed copies are at tag remote-0.1.6.
+samples/*.pdf
+*.ocr.txt
+*.bak-*
+.pytest_cache/
